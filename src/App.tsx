@@ -17,7 +17,10 @@ import { PanelWrapper } from "./features/node-panel";
 const initialNodes = [
   {
     id: "1",
-    data: { label: "Hello I am root node create more node and connect " },
+    data: {
+      label:
+        "Hello I am root node create more node and connect with me , or click me to edit ",
+    },
     position: { x: 0, y: 0 },
     type: "input",
   },
