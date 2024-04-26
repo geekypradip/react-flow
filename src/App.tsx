@@ -84,22 +84,25 @@ function App() {
     const nodeIds = nodes.map((node) => node.id);
     const edgeNodeIds = edges.flatMap((edge) => [edge.source, edge.target]);
 
-    const unconnectedNodeIds = nodeIds.filter(
-      (id) => !edgeNodeIds.includes(id)
-    );
+    if (nodeIds.length > 1) {
+      const unconnectedNodeIds = nodeIds.filter(
+        (id) => !edgeNodeIds.includes(id)
+      );
 
-    if (unconnectedNodeIds.length > 0) {
-      enqueueSnackbar("Can't Save the flow , Please connect all the nodes ", {
-        variant: "error",
-      });
-    } else {
-      //save the flow into local storage
-      const flow = { nodes, edges };
-      localStorage.setItem("flow", JSON.stringify(flow));
-      enqueueSnackbar("Flow Saved Successfully", {
-        variant: "success",
-      });
+      if (unconnectedNodeIds.length > 0) {
+        enqueueSnackbar("Can't Save the flow, Please connect all the nodes", {
+          variant: "error",
+        });
+        return;
+      }
     }
+
+    //save the flow into local storage
+    const flow = { nodes, edges };
+    localStorage.setItem("flow", JSON.stringify(flow));
+    enqueueSnackbar("Flow Saved Successfully", {
+      variant: "success",
+    });
   };
 
   useEffect(() => {
