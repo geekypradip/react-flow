@@ -58,6 +58,10 @@ function App() {
 
   const updateSelectedNode = useCallback(
     (value: string) => {
+      if (!value.trim())
+        return enqueueSnackbar("Can't update! please write something", {
+          variant: "error",
+        });
       const newNodes = nodes.map((node) => {
         if (node.id === selectedNode?.id) {
           return {

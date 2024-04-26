@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { useSnackbar } from "notistack";
 import ReactFlow, {
   Background,
   Connection,
@@ -21,6 +22,7 @@ interface IFlow {
 }
 
 export function Flow(props: IFlow) {
+  const { enqueueSnackbar } = useSnackbar();
   const onDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -28,19 +30,23 @@ export function Flow(props: IFlow) {
 
   const onDrop = (event: React.DragEvent) => {
     event.preventDefault();
-
     const reactFlowBounds = document
       .querySelector(".react-flow__renderer")!
       .getBoundingClientRect();
     const nodeData = JSON.parse(
       event.dataTransfer.getData("application/reactflow")
     );
+
+    if (!nodeData.value.trim())
+      return enqueueSnackbar("Can't create empty node", {
+        variant: "error",
+      });
     const position = {
       x: event.clientX - reactFlowBounds.left,
       y: event.clientY - reactFlowBounds.top,
     };
 
-    const newNode = {
+    const newNode: Node = {
       id: Date.now().toString(),
       position,
       width: 150,
