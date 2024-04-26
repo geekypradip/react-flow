@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import ReactFlow, {
   Background,
   Connection,
@@ -6,31 +7,66 @@ import ReactFlow, {
   EdgeChange,
   Node,
   NodeChange,
+  OnSelectionChangeParams,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
 interface IFlow {
   nodes: Node[];
   edges: Edge[];
-  onNodesChange: (changes: NodeChange[]) => void;
+  onNodesChange: (changes: NodeChange[], isItForDrag?: boolean) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (params: Connection) => void;
+  onSelectionChange: (params: OnSelectionChangeParams) => void;
 }
 
 export function Flow(props: IFlow) {
+  const onDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+
+    const reactFlowBounds = document
+      .querySelector(".react-flow__renderer")!
+      .getBoundingClientRect();
+    const nodeData = JSON.parse(
+      event.dataTransfer.getData("application/reactflow")
+    );
+    const position = {
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    };
+
+    const newNode = {
+      id: Date.now().toString(),
+      position,
+      width: 150,
+      height: 36,
+      data: { label: nodeData.value },
+    };
+
+    props.onNodesChange(newNode as unknown as NodeChange[], true);
+  };
+
   return (
-    <div style={{ height: "100%", width: "70%" }}>
+    <Box flexBasis={"70%"} height={"100%"}>
       <ReactFlow
+        onSelectionChange={props.onSelectionChange}
         nodes={props.nodes}
         onNodesChange={props.onNodesChange}
         edges={props.edges}
         onEdgesChange={props.onEdgesChange}
         onConnect={props.onConnect}
         fitView
+        onDragOver={onDragOver}
+        onDrop={onDrop}
       >
         <Background />
         <Controls />
       </ReactFlow>
-    </div>
+    </Box>
   );
 }
