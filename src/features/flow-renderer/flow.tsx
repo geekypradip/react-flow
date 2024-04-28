@@ -11,7 +11,7 @@ import ReactFlow, {
   OnSelectionChangeParams,
 } from "reactflow";
 import "reactflow/dist/style.css";
-
+import "./style/index.css";
 interface IFlow {
   nodes: Node[];
   edges: Edge[];
